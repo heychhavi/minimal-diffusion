@@ -13,11 +13,10 @@ sys.path.append('/kaggle/working/minimal-diffusion/')
 from src.utils import dist_util, logger
 
 from src.utils.args_utils import *
-from train_infer.factory_methods import create_model_and_diffusion
 from src.utils.args_utils import create_argparser, args_to_dict, model_and_diffusion_defaults
 from src.utils.custom_tokenizer import create_tokenizer
-
-
+sys.path.append('/kaggle/working/minimal-diffusion/src/')
+from train_infer.factory_methods import create_model_and_diffusion
 
 
 
