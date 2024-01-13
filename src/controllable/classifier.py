@@ -17,6 +17,7 @@ from modeling.diffusion.gaussian_diffusion import GaussianDiffusion
 
 
 from train_infer.factory_methods import create_model_and_diffusion
+sys.path.append('/kaggle/working/minimal-diffusion/')
 from src.utils import dist_util
 from src.utils.args_utils import create_argparser, args_to_dict, model_and_diffusion_defaults
 from src.utils.data_utils_sentencepiece import TextDataset
