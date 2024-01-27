@@ -1,3 +1,4 @@
+import torch
 import argparse
 from transformers import GPT2LMHeadModel, GPT2Tokenizer
 model = GPT2LMHeadModel.from_pretrained('gpt2')  # Load GPT-2 architecture
