@@ -1,5 +1,7 @@
 import argparse
 from transformers import GPT2LMHeadModel, GPT2Tokenizer
+model = GPT2LMHeadModel.from_pretrained('gpt2')  # Load GPT-2 architecture
+model.load_state_dict(torch.load('ckpts/greetings/ema_0.9999_000500.pt'))  # Load your custom weights
 
 def generate_text_of_specific_length(model_name, target_length, prompt):
     model = GPT2LMHeadModel.from_pretrained(model_name)
