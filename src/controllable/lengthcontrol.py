@@ -2,6 +2,15 @@ import torch
 import argparse
 from transformers import BertModel, BertTokenizer
 
+def load_model_and_tokenizer(model_path):
+    # Load the BERT model architecture
+    model = BertModel.from_pretrained('bert-base-uncased')  # Adjust model type if necessary
+    # Load the custom checkpoint
+    model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
+    # Load the tokenizer
+    tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')  # Adjust model type if necessary
+    return model, tokenizer
+
 def generate_text_with_bert(model, tokenizer, prompt, max_length):
     # Encoding the prompt
     input_ids = tokenizer.encode(prompt, return_tensors='pt', max_length=max_length, truncation=True)
@@ -26,9 +35,8 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    # Load the model and tokenizer
-    model = BertModel.from_pretrained(args.model_name_or_path)
-    tokenizer = BertTokenizer.from_pretrained(args.model_name_or_path)
+    # Load model and tokenizer
+    model, tokenizer = load_model_and_tokenizer(args.model_name_or_path)
 
     # Generate text
     generated_text = generate_text_with_bert(model, tokenizer, args.prompt, args.max_length)
