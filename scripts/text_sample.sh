@@ -17,7 +17,7 @@ fi
 BATCH_SIZE=${5:-50}
 TOP_P=${6:-0.9}
 CLAMP=${7:-no_clamp}
-SEQ_LEN=${8:-1}
+SEQ_LEN=${8:-10}
 SEED=${9:-10708}
 
 
