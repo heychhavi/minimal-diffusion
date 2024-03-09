@@ -9,32 +9,37 @@ def load_sentences_and_scores(file_path, tokenizer, max_seq_len):
 
     with open(file_path, 'r', encoding='utf-8') as f:
         for line in f:
-            # Adjusting the split to match the new format
-            parts = line.strip().split(" | ")
-            if len(parts) == 2:
-                # Extracting sentence and score based on the new format
-                sentence_part, score_part = parts
-                sentence = sentence_part.split("Sentence: ")[1]
-                score = float(score_part.split("Concreteness Score: ")[1])
-                sentences.append(sentence)
-                scores.append(score)
-
-                encoded_dict = tokenizer.encode_plus(
-                    sentence,                      
-                    add_special_tokens=True,       
-                    max_length=max_seq_len,        
-                    padding='max_length',          
-                    return_attention_mask=True,    
-                    return_tensors='pt',           
-                    truncation=True
-                )
-                
-                tokenized_texts.append(encoded_dict['input_ids'])
-                attention_masks.append(encoded_dict['attention_mask'])
+            # Check for lines with the full expected format
+            if "Sentence: " in line and "Concreteness Score: " in line:
+                parts = line.strip().split(" | ")
+                if len(parts) == 2:
+                    sentence_part, score_part = parts
+                    sentence = sentence_part.split("Sentence: ")[1]
+                    score = float(score_part.split("Concreteness Score: ")[1])
+                else:
+                    print(f"Skipping line due to unexpected format: {line.strip()}")
+                    continue
             else:
                 print(f"Skipping line due to unexpected format: {line.strip()}")
+                continue
+            
+            sentences.append(sentence)
+            scores.append(score)
 
-    if not tokenized_texts or not attention_masks:
+            encoded_dict = tokenizer.encode_plus(
+                sentence,                      
+                add_special_tokens=True,       
+                max_length=max_seq_len,        
+                padding='max_length',          
+                return_attention_mask=True,    
+                return_tensors='pt',           
+                truncation=True
+            )
+            
+            tokenized_texts.append(encoded_dict['input_ids'])
+            attention_masks.append(encoded_dict['attention_mask'])
+
+    if not tokenized_texts:
         raise RuntimeError("No valid data was loaded. Please check the input file and format.")
 
     tokenized_texts = torch.cat(tokenized_texts, dim=0)
