@@ -10,16 +10,9 @@ def load_sentences_and_scores(file_path, tokenizer, max_seq_len):
     with open(file_path, 'r', encoding='utf-8') as f:
         for line in f:
             try:
-                # Attempt to parse the sentence and score from each line
-                parts = line.strip().split(" | ")
-                if len(parts) == 2:
-                    sentence_part, score_part = parts
-                    sentence = sentence_part.replace('Sentence: ', '').strip()
-                    score = float(score_part.replace('Concreteness Score: ', '').strip())
-                else:
-                    # If the line does not match the expected format, log and skip it
-                    print(f"Skipping line due to unexpected format: {line.strip()}")
-                    continue
+                # Split the line into sentence and score based on the '|' delimiter
+                sentence, score_str = line.strip().split('|')
+                score = float(score_str)  # Convert the score part to float
 
                 sentences.append(sentence)
                 scores.append(score)
