@@ -10,38 +10,42 @@ def load_sentences_and_scores(file_path, tokenizer, max_seq_len):
     with open(file_path, 'r', encoding='utf-8') as f:
         for line in f:
             try:
-                # Attempt to extract sentence and score using the expected format
-                sentence_prefix, score_prefix = line.strip().split(" | ")
-                if sentence_prefix.startswith("Sentence: ") and score_prefix.startswith("Concreteness Score: "):
-                    sentence = sentence_prefix.replace("Sentence: ", "").strip()
-                    score = float(score_prefix.replace("Concreteness Score: ", "").strip())
+                # Attempt to parse the sentence and score from each line
+                parts = line.strip().split(" | ")
+                if len(parts) == 2:
+                    sentence_part, score_part = parts
+                    sentence = sentence_part.replace('Sentence: ', '').strip()
+                    score = float(score_part.replace('Concreteness Score: ', '').strip())
                 else:
-                    # Skip lines that do not match the expected format
+                    # If the line does not match the expected format, log and skip it
                     print(f"Skipping line due to unexpected format: {line.strip()}")
                     continue
 
                 sentences.append(sentence)
                 scores.append(score)
 
+                # Tokenize and encode the sentence
                 encoded_dict = tokenizer.encode_plus(
-                    sentence,
-                    add_special_tokens=True,
-                    max_length=max_seq_len,
-                    padding='max_length',
-                    return_attention_mask=True,
-                    return_tensors='pt',
+                    sentence,                      
+                    add_special_tokens=True,       
+                    max_length=max_seq_len,        
+                    padding='max_length',          
+                    return_attention_mask=True,    
+                    return_tensors='pt',           
                     truncation=True
                 )
-
+                
                 tokenized_texts.append(encoded_dict['input_ids'])
                 attention_masks.append(encoded_dict['attention_mask'])
-            except ValueError:
-                # Log lines that cause issues during processing
-                print(f"Skipping line due to processing error: {line.strip()}")
+            except ValueError as e:
+                # Log any ValueError encountered during parsing and skip the line
+                print(f"Error processing line: {line.strip()}. Error: {e}")
+                continue
 
     if not tokenized_texts:
         raise RuntimeError("No valid data was loaded. Please check the input file and format.")
 
+    # Concatenate the list of tensors into a single tensor for tokenized texts and attention masks
     tokenized_texts = torch.cat(tokenized_texts, dim=0)
     attention_masks = torch.cat(attention_masks, dim=0)
     scores = torch.tensor(scores)
