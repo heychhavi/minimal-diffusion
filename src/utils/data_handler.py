@@ -9,9 +9,13 @@ def load_sentences_and_scores(file_path, tokenizer, max_seq_len):
 
     with open(file_path, 'r', encoding='utf-8') as f:
         for line in f:
-            if line.count('|') == 1:
-                sentence, score = line.strip().split('|')
-                score = float(score)
+            # Adjusting the split to match the new format
+            parts = line.strip().split(" | ")
+            if len(parts) == 2:
+                # Extracting sentence and score based on the new format
+                sentence_part, score_part = parts
+                sentence = sentence_part.split("Sentence: ")[1]
+                score = float(score_part.split("Concreteness Score: ")[1])
                 sentences.append(sentence)
                 scores.append(score)
 
@@ -30,7 +34,7 @@ def load_sentences_and_scores(file_path, tokenizer, max_seq_len):
             else:
                 print(f"Skipping line due to unexpected format: {line.strip()}")
 
-    if not tokenized_texts or not attention_masks:  # Check if the lists are empty
+    if not tokenized_texts or not attention_masks:
         raise RuntimeError("No valid data was loaded. Please check the input file and format.")
 
     tokenized_texts = torch.cat(tokenized_texts, dim=0)
@@ -38,7 +42,6 @@ def load_sentences_and_scores(file_path, tokenizer, max_seq_len):
     scores = torch.tensor(scores)
 
     return sentences, scores, tokenized_texts, attention_masks
-
 
 
 class CustomDataset(Dataset):
