@@ -9,21 +9,19 @@ def load_sentences_and_scores(file_path, tokenizer, max_seq_len):
 
     with open(file_path, 'r', encoding='utf-8') as f:
         for line in f:
-            # Check if line contains exactly one delimiter '|'
             if line.count('|') == 1:
-                sentence, score = line.strip().split('|')  # Now safe to split
+                sentence, score = line.strip().split('|')
                 score = float(score)
                 sentences.append(sentence)
                 scores.append(score)
 
-                # Tokenize the sentence and truncate or pad to max_seq_len
                 encoded_dict = tokenizer.encode_plus(
-                    sentence,                      # Sentence to encode.
-                    add_special_tokens=True,       # Add '[CLS]' and '[SEP]'.
-                    max_length=max_seq_len,        # Pad or truncate.
-                    padding='max_length',          # Pad to max_length.
-                    return_attention_mask=True,    # Return attention mask.
-                    return_tensors='pt',           # Return PyTorch tensors.
+                    sentence,                      
+                    add_special_tokens=True,       
+                    max_length=max_seq_len,        
+                    padding='max_length',          
+                    return_attention_mask=True,    
+                    return_tensors='pt',           
                     truncation=True
                 )
                 
@@ -32,12 +30,15 @@ def load_sentences_and_scores(file_path, tokenizer, max_seq_len):
             else:
                 print(f"Skipping line due to unexpected format: {line.strip()}")
 
-    # Flatten the lists of tensors to single tensors
+    if not tokenized_texts or not attention_masks:  # Check if the lists are empty
+        raise RuntimeError("No valid data was loaded. Please check the input file and format.")
+
     tokenized_texts = torch.cat(tokenized_texts, dim=0)
     attention_masks = torch.cat(attention_masks, dim=0)
     scores = torch.tensor(scores)
 
     return sentences, scores, tokenized_texts, attention_masks
+
 
 
 class CustomDataset(Dataset):
