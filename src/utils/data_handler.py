@@ -2,17 +2,6 @@ import torch
 from torch.utils.data import Dataset, DataLoader
 
 def load_sentences_and_scores(file_path, tokenizer, max_seq_len):
-    """
-    Reads sentences and their concreteness scores from a file and tokenizes the sentences.
-    
-    Parameters:
-    - file_path: Path to the dataset file.
-    - tokenizer: Tokenizer instance used to tokenize sentences.
-    - max_seq_len: Maximum length of tokenized sequences.
-    
-    Returns:
-    - A tuple of lists: (sentences, scores, tokenized_texts, attention_masks)
-    """
     sentences = []
     scores = []
     tokenized_texts = []
@@ -20,24 +9,28 @@ def load_sentences_and_scores(file_path, tokenizer, max_seq_len):
 
     with open(file_path, 'r', encoding='utf-8') as f:
         for line in f:
-            sentence, score = line.strip().split('|')  # Adjust the delimiter if necessary
-            score = float(score)
-            sentences.append(sentence)
-            scores.append(score)
+            # Check if line contains exactly one delimiter '|'
+            if line.count('|') == 1:
+                sentence, score = line.strip().split('|')  # Now safe to split
+                score = float(score)
+                sentences.append(sentence)
+                scores.append(score)
 
-            # Tokenize the sentence and truncate or pad to max_seq_len
-            encoded_dict = tokenizer.encode_plus(
-                sentence,                      # Sentence to encode
-                add_special_tokens=True,       # Add '[CLS]' and '[SEP]'
-                max_length=max_seq_len,        # Pad or truncate
-                padding='max_length',          # Pad to max_length
-                return_attention_mask=True,    # Return attention mask
-                return_tensors='pt',           # Return PyTorch tensors
-                truncation=True
-            )
-            
-            tokenized_texts.append(encoded_dict['input_ids'])
-            attention_masks.append(encoded_dict['attention_mask'])
+                # Tokenize the sentence and truncate or pad to max_seq_len
+                encoded_dict = tokenizer.encode_plus(
+                    sentence,                      # Sentence to encode.
+                    add_special_tokens=True,       # Add '[CLS]' and '[SEP]'.
+                    max_length=max_seq_len,        # Pad or truncate.
+                    padding='max_length',          # Pad to max_length.
+                    return_attention_mask=True,    # Return attention mask.
+                    return_tensors='pt',           # Return PyTorch tensors.
+                    truncation=True
+                )
+                
+                tokenized_texts.append(encoded_dict['input_ids'])
+                attention_masks.append(encoded_dict['attention_mask'])
+            else:
+                print(f"Skipping line due to unexpected format: {line.strip()}")
 
     # Flatten the lists of tensors to single tensors
     tokenized_texts = torch.cat(tokenized_texts, dim=0)
@@ -45,6 +38,7 @@ def load_sentences_and_scores(file_path, tokenizer, max_seq_len):
     scores = torch.tensor(scores)
 
     return sentences, scores, tokenized_texts, attention_masks
+
 
 class CustomDataset(Dataset):
     """
