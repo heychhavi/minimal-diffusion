@@ -20,7 +20,7 @@ def load_sentences_and_scores(file_path, tokenizer, max_seq_len):
 
     with open(file_path, 'r', encoding='utf-8') as f:
         for line in f:
-            sentence, score = line.strip().split(',')  # Adjust the delimiter if necessary
+            sentence, score = line.strip().split('|')  # Adjust the delimiter if necessary
             score = float(score)
             sentences.append(sentence)
             scores.append(score)
