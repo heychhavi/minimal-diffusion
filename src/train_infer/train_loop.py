@@ -9,7 +9,7 @@ import torch.distributed as dist
 from torch.nn.parallel.distributed import DistributedDataParallel as DDP
 from torch.optim import AdamW
 from tqdm import tqdm
-
+sys.path.append('/kaggle/working/minimal-diffusion/src/')
 from src.utils import dist_util, logger
 from src.utils.fp16_util import (
     make_master_params,
