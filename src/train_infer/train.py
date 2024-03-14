@@ -10,7 +10,7 @@ from transformers import set_seed
 import os
 
 # Assuming '/kaggle/working/minimal-diffusion/src' is the correct full path to your 'src' directory:
-sys.path.append('/content/minimal-diffusion/src/utils')
+sys.path.append('/content/minimal-diffusion/src')
 
 # Now import directly from the modules and packages within 'src', without the 'src.' prefix.
 from utils import dist_util, logger
