@@ -8,6 +8,7 @@ import numpy as np
 import torch as th
 import torch.distributed as dist
 from transformers import set_seed
+sys.path.append('/kaggle/working/minimal-diffusion/src/')
 from src.utils import dist_util, logger
 
 from src.utils.args_utils import *
