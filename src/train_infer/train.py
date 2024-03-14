@@ -10,10 +10,24 @@ from transformers import set_seed
 import os
 
 # Assuming '/kaggle/working/minimal-diffusion/src' is the correct full path to your 'src' directory:
-sys.path.append('/content/minimal-diffusion/src')
+#sys.path.append('/content/minimal-diffusion/src')
+import importlib.util
+import sys
+
+def import_from_source(name, path):
+    spec = importlib.util.spec_from_file_location(name, path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    sys.modules[name] = module
+    return module
+
+# Example usage based on your directory structure
+dist_util = import_from_source("dist_util", "/content/minimal-diffusion/src/utils/dist_util.py")
+logger = import_from_source("logger", "/content/minimal-diffusion/src/utils/logger.py")
+
 
 # Now import directly from the modules and packages within 'src', without the 'src.' prefix.
-from utils import dist_util, logger
+#from utils import dist_util, logger
 from modeling.diffusion.resample import create_named_schedule_sampler
 from train_infer.factory_methods import create_model_and_diffusion
 from train_loop import TrainLoop
