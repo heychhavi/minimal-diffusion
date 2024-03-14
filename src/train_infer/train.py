@@ -13,7 +13,7 @@ import os
 sys.path.append('/kaggle/working/minimal-diffusion/src')
 
 # Now import directly from the modules and packages within 'src', without the 'src.' prefix.
-#from utils import dist_util, logger
+from utils import dist_util, logger
 from modeling.diffusion.resample import create_named_schedule_sampler
 from train_infer.factory_methods import create_model_and_diffusion
 from train_loop import TrainLoop
