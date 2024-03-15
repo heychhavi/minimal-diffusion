@@ -1,3 +1,4 @@
+sys.path.append('/kaggle/working/minimal-diffusion/src')
 import src.modeling.diffusion.gaussian_diffusion as gd
 from src.modeling.diffusion.respace import SpacedDiffusion, space_timesteps
 from src.modeling.predictor.transformer_model import TransformerNetModel
