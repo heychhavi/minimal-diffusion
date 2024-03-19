@@ -163,7 +163,7 @@ class DiffusionBertForSequenceClassification(nn.Module):
         checkpoint_path: str,
         config: BertConfig,
         diffusion_model: GaussianDiffusion,
-        num_labels: int = 2,
+        num_labels: int = 5,
     ):
         model = DiffusionBertForSequenceClassification(config, diffusion_model, num_labels)
         model.load_state_dict(torch.load(checkpoint_path), strict=False)
@@ -198,7 +198,7 @@ def train_classifier_on_diffusion_latents():
     config.vocab_size = tokenizer.vocab_size
 
     model = DiffusionBertForSequenceClassification(
-        config=config, num_labels=2, diffusion_model=diffusion
+        config=config, num_labels=5, diffusion_model=diffusion
     ).to(device)
 
     # Step 5: train the classifier
@@ -375,7 +375,7 @@ def unit_data_for_text_classification(train_epochs=50):
     config.embedding_dim = 128
 
     model = DiffusionBertForSequenceClassification(
-        config=config, num_labels=2, diffusion_model=StubDiffusionModel()
+        config=config, num_labels=5, diffusion_model=StubDiffusionModel()
     ).to(device)
 
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-5)
